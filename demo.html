@@ -7,24 +7,47 @@
     <meta http-equiv="Content-Language" content="en">
     
     
-    <title></title>
-    <link rel="assets" href="https://assets-cdn.github.com/">
- 
+    <title>Javascript Desktop Notifications Manager &ndash; Demo App</title>
       
-    <meta name="description" content="">
-
+    <meta name="description" content="Javascript Desktop Notifications Manager">
 
     <script src="vendors/html5-desktop-notifications/desktop-notify.js"></script>
     <script src="src/desktop-notificator.js"></script>
 
 
-    <!-- Resources below are for the demo. jsnotificator itselft doesn't require jquery or bootstrap -->
+    <!-- Resources below are for the demo. desktop-notificator itself doesn't require jquery or bootstrap -->
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" media="all" rel="stylesheet" />
     <script type="text/javascript" src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
+    <script type="text/javascript" src="demoApp.js"></script>
+
   </head>
   <body>
+
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">desktop-notificator</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="active"><a href="#">Demo Application</a></li>
+          <li><a href="https://github.com/jeka-kiselyov/js-desktop-notificator">Fork on GitHub</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+
 
   <div class="container-fluid">
 
@@ -34,7 +57,8 @@
         <h3>Items</h3>
         <ul class="list-group" id="items_container">
           <li class="list-group-item disabled">Some already read item</li>
-          <li class="list-group-item disabled">already read item</li>
+          <li class="list-group-item disabled"><a href="https://www.facebook.com/evgeniy.kiselyov">Fighter of the Nightman on FB</a></li>
+          <li class="list-group-item disabled"><a href="https://twitter.com/jeka911">Fighter of the Nightman on Twitter</a></li>
         </ul>
 
         <p class="text-muted">Move mouse over list item to mark it as read.</p>
@@ -108,85 +132,6 @@
 
 
 
-    <script>
-      var app = {};
-
-      app.permissionRequestCallback = function()
-      {
-        $('#permission_alert_error').hide();
-        $('#permission_alert_wrong').hide();
-        $('#permission_alert_ok').hide();
-        $('#permission_alert_disabled').hide();
-
-        var p = desktopNotificator.hasPermission(true);
-
-        if (p === false)
-          $('#permission_alert_error').show();
-        else if (p == notify.PERMISSION_GRANTED)
-          $('#permission_alert_ok').show();
-        else if (p == notify.PERMISSION_DENIED)
-          $('#permission_alert_disabled').show();
-        else if (p == notify.PERMISSION_DEFAULT)
-          $('#permission_alert_wrong').show();
-      }
-
-      app.addItem = function(title, body)
-      {
-        var id = desktopNotificator.addItem(title, body);
-
-        var html = "<li class='list-group-item' id='item_"+id+"'>"+title.split('<').join('&lt;')+"</li>";
-        $('#items_container').prepend(html);
-
-        $('#item_'+id).mouseenter(function(){
-          var id = $(this).attr('id').split('item_')[1];
-          desktopNotificator.markItemAsRead(id);
-          $(this).addClass('disabled');
-        });
-      }
-
-      app.updateStatus = function()
-      {
-        $('#status_no_unread_hide').show();
-
-        if (desktopNotificator.lastNotificationTime)
-        {
-          var diff = Date.now() - desktopNotificator.lastNotificationTime;
-          diff = diff / 1000;
-          $('#last_notification_seconds').html(diff.toFixed(1));
-        } else {
-          $('#last_notification_seconds').html("&infin;");          
-        }
-
-        if (desktopNotificator.unreadCount() > 0)
-        {
-          var diff = desktopNotificator.lastNotificationTime + desktopNotificator.minimumNotificationsTimeout - Date.now();
-          diff = diff / 1000;
-          $('#next_notification_seconds').html(diff.toFixed(1));
-          $('#status_next_one').show();
-          $('#status_no_unread_items').hide();
-
-        } else {
-          $('#status_next_one').hide();
-          $('#status_no_unread_items').show();
-        }
-      }
-      
-
-      $(function(){
-        setInterval(app.updateStatus, 100);
-        app.permissionRequestCallback();
-
-
-        $('#minimumNotificationsTimeout').val(desktopNotificator.minimumNotificationsTimeout).change(function(){
-          desktopNotificator.config({minimumNotificationsTimeout: $(this).val()});
-          $('#minimumNotificationsTimeout').val(desktopNotificator.minimumNotificationsTimeout);
-        });
-        $('#autoClose').val(desktopNotificator.autoClose).change(function(){
-          desktopNotificator.config({autoClose: $(this).val()});
-          $('#autoClose').val(desktopNotificator.autoClose);
-        });
-      });
-    </script>
 
   </div>
 
