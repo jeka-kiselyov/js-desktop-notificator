@@ -222,8 +222,7 @@
           description: description,
           url: url,
           data: data,
-          isRead: false,
-          isShown: false
+          isRead: false
         });
 
         if (desktopNotificator.autoStart)
@@ -275,20 +274,6 @@
       }
 
       /**
-       * Mark item as shown
-       * @param  {Number} id Item id
-       * @return {Boolean}   Success
-       */
-      desktopNotificator.markItemAsShown = function(id) {
-        desktopNotificator.stack.map(function(i){
-          if (i.id == id)
-            i.isShown = true;
-        });
-
-        return true;
-      }
-
-      /**
        * Empty stack
        * @return {Boolean} Success
        */
@@ -309,16 +294,6 @@
       }
 
       /**
-       * Returns array of items with not yet shown notifications
-       * @return {Array} Returns filtered array of items
-       */
-      desktopNotificator.getNotShown = function() {
-        return desktopNotificator.stack.filter(function(i) {
-          return !i.isShown;
-        });
-      }
-
-      /**
        * Get count of items in stack
        * @return {Number} Returns items count
        */
@@ -334,20 +309,6 @@
         var cnt = 0;
         desktopNotificator.stack.map(function(i){
           if (!i.isRead)
-            cnt++;
-        });
-
-        return cnt;
-      }
-
-      /**
-       * Get count of items with not yet shown notifications
-       * @return {Number} Returns count of not shown items
-       */
-      desktopNotificator.notShownCount = function() {
-        var cnt = 0;
-        desktopNotificator.stack.map(function(i){
-          if (!i.isShown)
             cnt++;
         });
 
