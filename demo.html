@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Language" content="en">
+    
+    
+    <title></title>
+    <link rel="assets" href="https://assets-cdn.github.com/">
+ 
+      
+    <meta name="description" content="">
+
+
+    <script src="vendors/html5-desktop-notifications/desktop-notify.js"></script>
+    <script src="src/desktop-notificator.js"></script>
+
+
+    <!-- Resources below are for the demo. jsnotificator itselft doesn't require jquery or bootstrap -->
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" media="all" rel="stylesheet" />
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+  </head>
+  <body>
+
+  <div class="container-fluid">
+
+    <div class="row">
+      <div class="col-md-8">
+        
+        <h3>Items</h3>
+        <ul class="list-group" id="items_container">
+          <li class="list-group-item disabled">Some already read item</li>
+          <li class="list-group-item disabled">already read item</li>
+        </ul>
+
+        <p class="text-muted">Move mouse over list item to mark it as read.</p>
+
+        <p class="text-muted">In real world, it may be better idea to mark items as read when application tab in browser is activated. You can check out <a href="http://stackoverflow.com/questions/1060008/is-there-a-way-to-detect-if-a-browser-window-is-not-currently-active">stackoverflow answer</a> about how to subscribe to such events.</p>
+
+
+      </div>
+      <div class="col-md-4">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">Add Item</div>
+          <div class="panel-body">
+
+            <div class="form-group">
+              <label for="add_title">Title</label>
+              <input type="text" class="form-control" id="add_title" value="Oh tonight">
+            </div>
+            <div class="form-group">
+              <label for="add_body">Body</label>
+              <input type="text" class="form-control" id="add_body" value="you killed me with your smile">
+            </div>
+
+            <button type="button" class="btn btn-default" onclick="app.addItem($('#add_title').val(), $('#add_body').val());">Add</button>
+          </div>
+        </div>
+        
+        <div class="panel panel-default">
+          <div class="panel-heading">Desktop Notifications Permissions</div>
+          <div class="panel-body">
+            <div class="alert alert-success" id="permission_alert_ok" role="alert"><span class="glyphicon glyphicon-ok"></span> Notifications Permissions Granted</div>
+            <div class="alert alert-warning" id="permission_alert_wrong" role="alert"><span class="glyphicon glyphicon-ok"></span> Click <a href="#" class="alert-link" onclick="desktopNotificator.requestPermission(app.permissionRequestCallback);">here</a> to grant notifications permissions</div>
+            <div class="alert alert-danger" id="permission_alert_error" role="alert"><span class="glyphicon glyphicon-ok"></span> Desktop notifications are not supported by your browser. Sorry.</div>
+            <div class="alert alert-danger" id="permission_alert_disabled" role="alert"><span class="glyphicon glyphicon-ok"></span> You've disabled notifications for this domain. App can <a href="#" class="alert-link" onclick="desktopNotificator.requestPermission(app.permissionRequestCallback);">try to ask for permissions again</a>. You can restart browser. Or enable notifications for this domain from browser settings.</div>
+          </div>
+        </div>
+
+
+        <div class="panel panel-default">
+          <div class="panel-heading">Config</div>
+          <div class="panel-body">
+
+            <div class="form-group">
+              <label for="minimumNotificationsTimeout">Minimum timeout between notifications (in microseconds)</label>
+              <input type="number" class="form-control" id="minimumNotificationsTimeout" value="120000" min="1000" step="1000" max="1000000">
+            </div>
+
+            <div class="form-group">
+              <label for="autoClose">Display notification popup for (in microseconds)</label>
+              <input type="number" class="form-control" id="autoClose" value="5000" min="1000" step="1000" max="1000000">
+            </div>
+
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">Status</div>
+          <div class="panel-body">
+
+            <p>Last notification: <span id="last_notification_seconds">&infin;</span> seconds ago.</p>
+            <p id="status_next_one">Next one will be shown in <span id="next_notification_seconds">&infin;</span> seconds.</p>
+            <p id="status_no_unread_items">There're no unread items. Add new item for new notification</p>
+
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+
+
+
+
+    <script>
+      var app = {};
+
+      app.permissionRequestCallback = function()
+      {
+        $('#permission_alert_error').hide();
+        $('#permission_alert_wrong').hide();
+        $('#permission_alert_ok').hide();
+        $('#permission_alert_disabled').hide();
+
+        var p = desktopNotificator.hasPermission(true);
+
+        if (p === false)
+          $('#permission_alert_error').show();
+        else if (p == notify.PERMISSION_GRANTED)
+          $('#permission_alert_ok').show();
+        else if (p == notify.PERMISSION_DENIED)
+          $('#permission_alert_disabled').show();
+        else if (p == notify.PERMISSION_DEFAULT)
+          $('#permission_alert_wrong').show();
+      }
+
+      app.addItem = function(title, body)
+      {
+        var id = desktopNotificator.addItem(title, body);
+
+        var html = "<li class='list-group-item' id='item_"+id+"'>"+title.split('<').join('&lt;')+"</li>";
+        $('#items_container').prepend(html);
+
+        $('#item_'+id).mouseenter(function(){
+          var id = $(this).attr('id').split('item_')[1];
+          desktopNotificator.markItemAsRead(id);
+          $(this).addClass('disabled');
+        });
+      }
+
+      app.updateStatus = function()
+      {
+        $('#status_no_unread_hide').show();
+
+        if (desktopNotificator.lastNotificationTime)
+        {
+          var diff = Date.now() - desktopNotificator.lastNotificationTime;
+          diff = diff / 1000;
+          $('#last_notification_seconds').html(diff.toFixed(1));
+        } else {
+          $('#last_notification_seconds').html("&infin;");          
+        }
+
+        if (desktopNotificator.unreadCount() > 0)
+        {
+          var diff = desktopNotificator.lastNotificationTime + desktopNotificator.minimumNotificationsTimeout - Date.now();
+          diff = diff / 1000;
+          $('#next_notification_seconds').html(diff.toFixed(1));
+          $('#status_next_one').show();
+          $('#status_no_unread_items').hide();
+
+        } else {
+          $('#status_next_one').hide();
+          $('#status_no_unread_items').show();
+        }
+      }
+      
+
+      $(function(){
+        setInterval(app.updateStatus, 100);
+        app.permissionRequestCallback();
+
+
+        $('#minimumNotificationsTimeout').val(desktopNotificator.minimumNotificationsTimeout).change(function(){
+          desktopNotificator.config({minimumNotificationsTimeout: $(this).val()});
+          $('#minimumNotificationsTimeout').val(desktopNotificator.minimumNotificationsTimeout);
+        });
+        $('#autoClose').val(desktopNotificator.autoClose).change(function(){
+          desktopNotificator.config({autoClose: $(this).val()});
+          $('#autoClose').val(desktopNotificator.autoClose);
+        });
+      });
+    </script>
+
+  </div>
+
+  </body>
+</html>

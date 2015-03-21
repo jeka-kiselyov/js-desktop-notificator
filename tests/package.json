@@ -1,0 +1,11 @@
+{
+  "name": "tests",
+  "version": "0.0.1",
+  "description": "testse",
+  "main": "karma.conf.js",
+  "author": "me",
+  "license": "BSD-2-Clause",
+  "devDependencies": {
+    "karma": "~0.10"
+  }
+}

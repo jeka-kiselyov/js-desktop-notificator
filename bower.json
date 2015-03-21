@@ -1,0 +1,15 @@
+{
+  "name": "js-desktop-notificator",
+  "version": "0.0.1",
+  "authors": [
+    "jeka911 <jeka911@gmail.com>"
+  ],
+  "description": "",
+  "main": "demoApp.js",
+  "moduleType": [
+    "globals"
+  ],
+  "dependencies": {
+    "html5-desktop-notifications": "*"
+  }
+}
