@@ -4,7 +4,7 @@ Javascript Library for Managing Desktop Notifications Stack
 Demo Application
 -------
 
-Coming soon.
+[Demo Application](http://jeka-kiselyov.github.io/js-desktop-notificator/)
 
 Installation
 -------
