@@ -1,0 +1,30 @@
+{
+  "name": "HTML5-Desktop-Notifications",
+  "homepage": "https://github.com/ttsvetko/HTML5-Desktop-Notifications",
+  "authors": [
+    "Tsvetan Tsvetkov <tsekach@gmail.com>"
+  ],
+  "description": "A small library that unifies the HTML5 Notifications APIs across different browsers including IE9 & IE10.",
+  "main": "desktop-notify.js",
+  "keywords": [
+    "html5",
+    "notifications"
+  ],
+  "license": "Apache License, Version 2.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "1ad38f3041",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "1ad38f3041d16f63bc4740970286273b174f3b9d"
+  },
+  "_source": "git://github.com/ttsvetko/HTML5-Desktop-Notifications.git",
+  "_target": "*",
+  "_originalSource": "html5-desktop-notifications"
+}
